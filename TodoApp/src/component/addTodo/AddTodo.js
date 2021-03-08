@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     width: wp('15%'),
     height: hp('7.5%'),
-    borderRadius: wp('7.5%'),
+    borderRadius: wp('7%'),
     position: 'absolute',
     right: wp('4.75%'),
     bottom: 10,

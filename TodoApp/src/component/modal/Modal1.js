@@ -20,13 +20,13 @@ import {
 import uuid from 'react-native-uuid';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import AddTodo from '../addTodo/AddTodo';
+import {add} from 'react-native-reanimated';
 
 export default function Modal1(props) {
   const [todo, setTodo] = useState('');
   const [category, setCategory] = useState('');
   const [finish, setFinish] = useState(false);
   const [slider, setSlider] = useState(0);
-  const [modal, setModal] = useState(true);
 
   const addTodo = async () => {
     let todos = await AsyncStorage.getItem('list')
@@ -34,24 +34,19 @@ export default function Modal1(props) {
       .catch((e) => {
         throw e;
       });
-    console.log('cibai', todos);
-    // let item = {
-    //   todo: todo,
-    //   category: category,
-    //   finish: finish,
-    //   key: uuid.v4(),
-    // };
-    if (todos === null) {
-      todos = {item: []};
-    }
-    todos.item.push({
+    console.log('test', todos);
+    let item = {
       todo: todo,
       category: category,
       finish: finish,
       key: uuid.v4(),
-    });
+    };
+    if (todos == null) {
+      todos = [];
+    } else if (todo !== '' && category !== '') todos.push(item);
 
     await AsyncStorage.setItem('list', JSON.stringify(todos));
+    console.log(`ini todos`, todos);
     setTodo('');
     setCategory('');
   };
@@ -107,9 +102,11 @@ export default function Modal1(props) {
               placeholder="Todo"
             />
           </View>
+
           <TouchableOpacity
             onPress={() => {
-              AddTodo(), props.close;
+              addTodo();
+              props.press;
             }}
             style={styles.button}>
             <Text>Add</Text>
@@ -129,6 +126,7 @@ const styles = StyleSheet.create({
   inputContainer: {
     marginHorizontal: wp(2),
     marginTop: hp(2),
+    height: hp(72.5),
   },
   input: {},
   button: {

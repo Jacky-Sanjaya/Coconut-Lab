@@ -21,7 +21,7 @@ import Modal from '../../component/modal/Modal1';
 import TodoBox from '../../component/todoBox/TodoBox';
 import AddTodo from '../../component/addTodo/AddTodo';
 
-export default function HomeScreen({navigation, props}) {
+export default function HomeScreen(props) {
   const [modal, setModal] = useState(false);
   const [todo, setTodo] = useState('');
 
@@ -32,7 +32,10 @@ export default function HomeScreen({navigation, props}) {
   const getTodo = async () => {
     await AsyncStorage.getItem('list')
       .then((item) => {
-        JSON.parse(item), setTodo(item);
+        {
+          const parsed = JSON.parse(item);
+          setTodo(parsed);
+        }
       })
       .catch((e) => {
         throw e;
@@ -40,7 +43,7 @@ export default function HomeScreen({navigation, props}) {
   };
   useEffect(() => {
     getTodo();
-  }, [getTodo()]);
+  }, [modal]);
   function renderHeader() {
     return (
       <View
@@ -60,15 +63,14 @@ export default function HomeScreen({navigation, props}) {
   }
 
   function renderTodo() {
-    const renderItem = (item) => {
-      console.log(`ini item`, item);
+    const renderItem = ({item}) => {
       return <TodoBox todo={item.todo} />;
     };
     return (
       <FlatList
-        data={todo.item}
+        data={todo}
         renderItem={renderItem}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item.key}
       />
     );
   }
@@ -89,15 +91,12 @@ export default function HomeScreen({navigation, props}) {
   function renderAdd() {
     return (
       <View>
-        <AddTodo press={() => modalHandler()} />
+        <AddTodo press={modalHandler} />
         <Modal
           visible={modal}
-          close={modalHandler}
-          onBackdropPress={() => setModal(false)}
+          press={modalHandler}
+          onBackdropPress={() => modalHandler()}
           category={(value) => setCategory(value)}
-          press={() => {
-            setModal(false);
-          }}
         />
       </View>
     );
